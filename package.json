@@ -16,6 +16,7 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "build": "rimraf ./lib && tsc --project tsconfig.build.json",
+        "run-examples": "rimraf ./examples-compiled && tsc --project tsconfig.examples.json && node examples-compiled/examples/entry.js",
         "prepare": "npm run build"
     },
     "main": "lib/index.js",

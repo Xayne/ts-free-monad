@@ -1,0 +1,13 @@
+{
+    "include": [
+        "src", "examples"
+    ],
+    "lib": [
+        "esnext", "DOM"
+    ],
+    "extends": "./tsconfig",
+    "compilerOptions": {
+        "declaration": false,
+        "outDir": "./examples-compiled",
+    }
+}

@@ -1,13 +1,13 @@
 {
     "include": [
-        "src"
+        "src", "examples"
     ],
     "compilerOptions": {
         "target": "es5",
         "module": "commonjs",
         "declaration": true,
         "lib": [
-            "esnext"
+            "esnext", "DOM"
         ],
         "allowJs": true,
         "skipLibCheck": true,
