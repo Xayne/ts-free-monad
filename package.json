@@ -1,0 +1,38 @@
+{
+    "name": "ts-free-monad",
+    "version": "0.1.1",
+    "description": "Highly performant and stack-safe implementation of The Free monad for typescript",
+    "keywords": [
+        "fp",
+        "functional-programming",
+        "typescript",
+        "free",
+        "monad",
+        "free-monad"
+    ],
+    "author": "xayne <xayne.rpc@gmail.com>",
+    "license": "MIT",
+    "sideEffects": false,
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "rimraf ./lib && tsc --project tsconfig.build.json",
+        "prepare": "npm run build"
+    },
+    "main": "lib/index.js",
+    "types": "lib/index.d.ts",
+    "files": [
+        "lib/**/*"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Xayne/ts-free-monad.git"
+    },
+    "bugs": {
+        "url": "https://github.com/Xayne/ts-free-monad/issues"
+    },
+    "homepage": "https://github.com/Xayne/ts-free-monad#readme",
+
+    "devDependencies": {
+        "rimraf": "^3.0.2"
+    }
+}
