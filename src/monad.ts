@@ -1,5 +1,6 @@
 import { CatList, CatNil, link, snoc, uncons } from "./internal/collections/cat-list"
 import { hot } from "./hot"
+import { TailRec } from "./tail-rec"
 
 export class Free<f, v> {
 
@@ -71,7 +72,7 @@ export class Free<f, v> {
      * (just substitute `Observable` in this example with a monad type and provide correct arguments)
      */
     fold<mv, ma>(
-        /** actually: ```f a -> m a``` */ 
+        /** actually: ```f a -> m a``` */
         nat: <a>(f: hot<f, a>) => ma,
         /** actually: ```a -> m a``` */
         pure: (v: v) => mv,
@@ -86,6 +87,28 @@ export class Free<f, v> {
         return fmap(v => d.next(v).fold(nat, pure, fmap))(nat(d.v) as any)
     }
 
+    
+    /** 
+     * Folding into `TailRec` monad. 
+     * 
+     * Experimental, still in testing
+     */
+    fold_tr<mv, ma>(
+        /** actually: ```a -> m a``` */
+        pure: (v: v) => mv,
+        /** actually: ```f a -> m a``` */
+        nat: <a>(f: hot<f, a>) => ma,
+    ): TailRec<mv> {
+        const d = this.ibx()
+        if (d.type === FreeDataTag.Pure) {
+            return { type: 'Done', v: pure(d.v) }
+        }
+        return {
+            type: 'Next',
+            v: nat(d.v) as any,
+            next: v => d.next(v).fold_tr(pure, nat)
+        }
+    }
 
     private ibx(): FreeData<f, _, v> {
         const d = this.data
@@ -95,7 +118,6 @@ export class Free<f, v> {
                 return d
             }
             const [e, list] = nexp
-            // todo tramplin instead of addexp
             return e(d.v).addexp(list).ibx()
         }
         return {
@@ -111,6 +133,48 @@ export class Free<f, v> {
 
 }
 
+/**
+ * Experimental, still in testing
+ * 
+ * Folding into other monad, Stack safe. 
+ * Instead of `fmap` function needed in usual `fold`, here,
+ * `unwind` function is needed instead.
+ * 
+ * unwind must stack-safely unfold chain of computation
+ * 
+ * Here is example of `unwind` for trivial Either monad:
+ * 
+ * ```
+export type Either<l, r> = { _tag: 'Left' l: l } | { _tag: 'Right' r: r }
+
+export const eiUnwind: <l, v>(tr: TailRec<Either<l, v>>) => Either<l, v>
+    = tr => {
+        let __t = tr
+        while (true) {
+            if (__t.type === 'Done') {
+                return __t.v
+            }
+            const t = __t
+            const ne = __t.v as Either<any, any>
+            if (ne._tag === 'Left') {
+                return ne
+            }
+            p(ne, eiMap(x => {
+                __t = t.next(x)
+            }))
+        }
+    }
+   ```
+ */
+export const foldTailRec: <f, v, mv, ma>(
+    /** actually: ```f a -> m a``` */
+    nat: <a>(f: hot<f, a>) => ma,
+    /** actually: ```a -> m a``` */
+    pure: (v: v) => mv,
+    /** actually: ```TailRec m a -> m a``` */
+    unwind: (mv: TailRec<mv>) => mv
+) => (free: Free<f, v>) => mv
+    = (nat, pure, unwind) => v => unwind(v.fold_tr(pure, nat))
 
 type _ = any
 
