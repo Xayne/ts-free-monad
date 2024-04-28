@@ -1,6 +1,6 @@
 {
     "name": "ts-free-monad",
-    "version": "0.1.1",
+    "version": "0.2.0",
     "description": "Highly performant and stack-safe implementation of The Free monad for typescript",
     "keywords": [
         "fp",
@@ -32,7 +32,6 @@
         "url": "https://github.com/Xayne/ts-free-monad/issues"
     },
     "homepage": "https://github.com/Xayne/ts-free-monad#readme",
-
     "devDependencies": {
         "rimraf": "^3.0.2"
     }
